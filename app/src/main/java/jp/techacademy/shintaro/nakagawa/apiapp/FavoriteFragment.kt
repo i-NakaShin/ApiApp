@@ -2,6 +2,7 @@ package jp.techacademy.shintaro.nakagawa.apiapp
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +36,9 @@ class FavoriteFragment: Fragment() {
             }
             // Itemをクリックしたとき
             onClickItem = {
-                fragmentCallback?.onClickItem(it as Shop)
+                var url = CouponUrls(sp = it.url, pc = "")
+                var shop = Shop(address = it.address, id = it.id, name = it.name, logoImage = it.imageUrl, couponUrls = url)
+                fragmentCallback?.onClickItem(shop)
             }
         }
         // RecyclerViewの初期化

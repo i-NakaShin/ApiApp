@@ -61,21 +61,39 @@ class FavoriteAdapter(private val context: Context): RecyclerView.Adapter<Recycl
     // ViewHolder内のUI部品に値などをセット
     private fun updateFavoriteItemViewHolder(holder: FavoriteItemViewHolder, position: Int) {
         val data = items[position]
-        holder.apply {
-            rootView.apply {
-                setBackgroundColor(ContextCompat.getColor(context, if (position % 2 == 0) android.R.color.white else android.R.color.darker_gray)) // 偶数番目と機数番目で背景色を変更させる
-                setOnClickListener {
-                    onClickItem?.invoke(data)
+//        if (data != null) {
+//            var shop: Shop? = null
+//            shop?.apply {
+//                id = data.id
+//                address = data.address
+//                couponUrls.sp = data.url
+//                logoImage = data.imageUrl
+//                name = data.name
+//            }
+            holder.apply {
+                rootView.apply {
+                    setBackgroundColor(
+                        ContextCompat.getColor(
+                            context,
+                            if (position % 2 == 0) android.R.color.white else android.R.color.darker_gray
+                        )
+                    ) // 偶数番目と機数番目で背景色を変更させる
+                    setOnClickListener {
+//                        if (shop != null) {
+                            onClickItem?.invoke(data)
+//                        }
+                    }
+                }
+                nameTextView.text = data.name
+                adrTextView.text = data.address
+                Picasso.get().load(data.imageUrl)
+                    .into(imageView) // Picassoというライブラリを使ってImageVIewに画像をはめ込む
+                favoriteImageView.setOnClickListener {
+                    onClickDeleteFavorite?.invoke(data)
+                    notifyItemChanged(position)
                 }
             }
-            nameTextView.text = data.name
-            adrTextView.text = data.address
-            Picasso.get().load(data.imageUrl).into(imageView) // Picassoというライブラリを使ってImageVIewに画像をはめ込む
-            favoriteImageView.setOnClickListener {
-                onClickDeleteFavorite?.invoke(data)
-                notifyItemChanged(position)
-            }
-        }
+//        }
     }
 
     // お気に入りが登録されているときのリスト

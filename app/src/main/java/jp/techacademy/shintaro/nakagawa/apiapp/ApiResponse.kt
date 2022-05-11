@@ -17,13 +17,13 @@ data class Shop(
     @SerializedName("address")
     var address: String,
     @SerializedName("coupon_urls")
-    val couponUrls: CouponUrls,
+    var couponUrls: CouponUrls,
     @SerializedName("id")
-    val id: String,
+    var id: String,
     @SerializedName("logo_image")
-    val logoImage: String,
+    var logoImage: String,
     @SerializedName("name")
-    val name: String
+    var name: String
 ): Serializable
 
 data class CouponUrls(

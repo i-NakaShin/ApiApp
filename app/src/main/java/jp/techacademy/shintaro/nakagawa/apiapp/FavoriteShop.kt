@@ -11,6 +11,7 @@ open class FavoriteShop: RealmObject() {
     var name: String = ""
     var address: String = ""
     var url: String = ""
+    /*var isFavorite: Boolean = true*/
 
     companion object {
         fun findAll(): List<FavoriteShop> = // お気に入りのShopを全件取得
