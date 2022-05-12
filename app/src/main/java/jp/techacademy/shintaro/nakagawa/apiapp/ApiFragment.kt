@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,7 @@ class ApiFragment: Fragment() {
     private var fragmentCallback : FragmentCallback? = null // Fragment -> Activity にFavoriteの変更を通知する
 
     private var page = 0
+    private var keyword: String = "ランチ"
 
     // Apiでデータを読み込み中ですフラグ。追加ページの読み込みの時にこれがないと、連続して読み込んでしまうので、それの制御のため
     private var isLoading = false
@@ -73,22 +75,24 @@ class ApiFragment: Fragment() {
                     // ユーザビリティを考えると、一番下にスクロールしてから追加した場合、一度スクロールが止まるので、ユーザーは気付きにくい
                     // ここでは、一番下から5番目を表示した時に追加読み込みする様に実装する
                     if (!isLoading && lastVisibleItem >= totalCount - 6) { // 読み込み中でない、かつ、現在のスクロール位置から下に5件見えていないアイテムがある
-                        updateData(true)
+                        updateData(true, keyword)
                     }
                 }
             })
         }
         swipeRefreshLayout.setOnRefreshListener {
-            updateData()
+            updateData(false, keyword)
         }
-        updateData()
+        updateData(false, keyword)
     }
 
-    fun updateView() { // お気に入りが削除されたときの処理（Activityからコールされる）
+    fun updateView(api_keyword: String = keyword) { // お気に入りが削除されたときの処理（Activityからコールされる）
+        updateData(false, api_keyword)
         recyclerView.adapter?.notifyDataSetChanged() // RecyclerViewのAdapterに対して再描画のリクエストをする
     }
 
-    private fun updateData(isAdd: Boolean = false) {
+    private fun updateData(isAdd: Boolean = false, api_keyword: String) {
+        keyword = api_keyword
         if (isLoading) {
             return
         } else {
@@ -105,7 +109,7 @@ class ApiFragment: Fragment() {
             .append("?key=").append(getString(R.string.api_key)) // Apiを使うためのApiKey
             .append("&start=").append(start) // 何件目からのデータを取得するか
             .append("&count=").append(COUNT) // 1回で20件取得する
-            .append("&keyword=").append(getString(R.string.api_keyword)) // お店の検索ワード。ここでは例として「ランチ」を検索
+            .append("&keyword=").append(api_keyword) // お店の検索ワード。ここでは例として「ランチ」を検索
             .append("&format=json") // ここで利用しているAPIは戻りの形をxmlかjsonが選択することができる。Androidで扱う場合はxmlよりもjsonの方が扱いやすいので、jsonを選択
             .toString()
         val client = OkHttpClient.Builder()

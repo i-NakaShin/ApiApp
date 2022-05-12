@@ -1,16 +1,22 @@
 package jp.techacademy.shintaro.nakagawa.apiapp
 
+import android.app.Application
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), FragmentCallback {
+class MainActivity : AppCompatActivity(), FragmentCallback, SearchView.OnQueryTextListener {
 
     private val viewPagerAdapter by lazy { ViewPagerAdapter(this) }
+    protected lateinit var searchView:SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +35,29 @@ class MainActivity : AppCompatActivity(), FragmentCallback {
         TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
             tab.setText(viewPagerAdapter.titleIds[position])
         }.attach()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.search_menu, menu)
+        searchView = menu?.findItem(R.id.search_menu_item)?.actionView as SearchView
+        searchView.setOnQueryTextListener(this)
+        searchView.isSubmitButtonEnabled = false
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if (!query.isNullOrBlank()) {
+            (viewPagerAdapter.fragments[VIEW_PAGER_POSITION_API] as ApiFragment).updateView(query)
+        } else {
+            (viewPagerAdapter.fragments[VIEW_PAGER_POSITION_API] as ApiFragment).updateView(getString(R.string.api_keyword))
+        }
+
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        return false
     }
 
     override fun onClickItem(shop: Shop) {

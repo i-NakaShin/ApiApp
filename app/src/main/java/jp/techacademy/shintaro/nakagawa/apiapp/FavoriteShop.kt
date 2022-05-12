@@ -1,5 +1,6 @@
 package jp.techacademy.shintaro.nakagawa.apiapp
 
+import android.util.Log
 import io.realm.Realm
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
@@ -11,12 +12,13 @@ open class FavoriteShop: RealmObject() {
     var name: String = ""
     var address: String = ""
     var url: String = ""
-    /*var isFavorite: Boolean = true*/
+    var isFavorite: Boolean = true
 
     companion object {
         fun findAll(): List<FavoriteShop> = // お気に入りのShopを全件取得
             Realm.getDefaultInstance().use { realm ->
                 realm.where(FavoriteShop::class.java)
+                    .equalTo("isFavorite", true)
                     .findAll().let {
                         realm.copyFromRealm(it)
                     }
@@ -42,7 +44,7 @@ open class FavoriteShop: RealmObject() {
                     .equalTo(FavoriteShop::id.name, id)
                     .findFirst()?.also { deleteShop ->
                         realm.executeTransaction {
-                            deleteShop.deleteFromRealm()
+                            deleteShop.isFavorite = false
                         }
                     }
             }

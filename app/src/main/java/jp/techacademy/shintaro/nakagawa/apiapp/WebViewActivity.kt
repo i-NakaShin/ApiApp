@@ -17,7 +17,12 @@ class WebViewActivity: AppCompatActivity(), FragmentCallback {
         val shop = intent.getSerializableExtra("shop") as Shop
         webView.loadUrl(if (shop.couponUrls.sp.isNotEmpty()) shop.couponUrls.sp else shop.couponUrls.pc)
 
-        isFavorite = FavoriteShop.findBy(shop.id) != null
+        var realmShop = FavoriteShop.findBy(shop.id)
+        if (realmShop != null) {
+            isFavorite = realmShop!!.isFavorite
+        } else {
+            isFavorite = false
+        }
         favoriteImageView.apply {
             setImageResource(if (isFavorite) R.drawable.ic_star else R.drawable.ic_star_border) // Picassoというライブラリを使ってImageVIewに画像をはめ込む
             setOnClickListener {
@@ -35,11 +40,12 @@ class WebViewActivity: AppCompatActivity(), FragmentCallback {
 
     override fun onAddFavorite(shop: Shop) { // Favoriteに追加するときのメソッド(Fragment -> Activity へ通知する)
         FavoriteShop.insert(FavoriteShop().apply {
-            id = shop.id
-            name = shop.name
-            address = shop.address
-            imageUrl = shop.logoImage
-            url = if (shop.couponUrls.sp.isNotEmpty()) shop.couponUrls.sp else shop.couponUrls.pc
+            this.id = shop.id
+            this.name = shop.name
+            this.address = shop.address
+            this.imageUrl = shop.logoImage
+            this.url = if (shop.couponUrls.sp.isNotEmpty()) shop.couponUrls.sp else shop.couponUrls.pc
+            this.isFavorite = true
         })
 
         isFavorite = true

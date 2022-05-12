@@ -61,15 +61,6 @@ class FavoriteAdapter(private val context: Context): RecyclerView.Adapter<Recycl
     // ViewHolder内のUI部品に値などをセット
     private fun updateFavoriteItemViewHolder(holder: FavoriteItemViewHolder, position: Int) {
         val data = items[position]
-//        if (data != null) {
-//            var shop: Shop? = null
-//            shop?.apply {
-//                id = data.id
-//                address = data.address
-//                couponUrls.sp = data.url
-//                logoImage = data.imageUrl
-//                name = data.name
-//            }
             holder.apply {
                 rootView.apply {
                     setBackgroundColor(
@@ -79,9 +70,7 @@ class FavoriteAdapter(private val context: Context): RecyclerView.Adapter<Recycl
                         )
                     ) // 偶数番目と機数番目で背景色を変更させる
                     setOnClickListener {
-//                        if (shop != null) {
-                            onClickItem?.invoke(data)
-//                        }
+                        onClickItem?.invoke(data)
                     }
                 }
                 nameTextView.text = data.name

@@ -80,7 +80,13 @@ class ApiAdapter(private val context: Context): RecyclerView.Adapter<RecyclerVie
         // 生成されたViewHolderの位置を指定し、オブジェクトを代入
         val data = items[position]
         // お気に入り状態を取得
-        val isFavorite = FavoriteShop.findBy(data.id) != null
+        var isFavorite: Boolean
+        var realmShop = FavoriteShop.findBy(data.id)
+        if (realmShop != null) {
+            isFavorite = realmShop!!.isFavorite
+        } else {
+            isFavorite = false
+        }
         holder.apply {
             rootView.apply {
                 // 偶数番目と奇数番目で背景色を変更させる
